@@ -14,57 +14,70 @@ import {
   ImageBackground
 } from "react-native";
 import { Actions } from "react-native-router-flux";
-export default class Reset extends Component {
+
+import Store from "./store/Store";
+import { connect } from "react-redux";
+import * as actionCreators from "./actions";
+class Reset extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      password: "",
-      confirmPassword: "",
-      passwordMsg: "",
-      confirmPasswordMsg: ""
-    };
   }
   handlePassword = text => {
-    this.setState({ password: text });
-    if (this.state.password.length < 7) {
-      this.setState({ passwordMsg: "minimum 8 character" });
+    Store.dispatch(actionCreators.inputChange("password", text));
+
+    if (this.props.data.password.length < 7) {
+      Store.dispatch(actionCreators.ChangePasswordMsg("minimum 8 character"));
     } else {
-      this.setState({ passwordMsg: "" });
+      Store.dispatch(actionCreators.ChangePasswordMsg(""));
     }
   };
   handleConfirmPassword = text => {
-    this.setState({ confirmPassword: text });
-    if (this.state.confirmPassword.length < 7) {
-      this.setState({ confirmPasswordMsg: "minimum 8 character" });
+    Store.dispatch(actionCreators.inputChange("confirmPassword", text));
+    if (this.props.data.confirmPassword.length < 7) {
+      Store.dispatch(
+        actionCreators.ChangeConfirmPasswordMsg("minimum 8 character")
+      );
     } else {
-      this.setState({ confirmPasswordMsg: "" });
+      Store.dispatch(actionCreators.ChangeConfirmPasswordMsg(""));
     }
   };
   submit = e => {
     let isAgree = false;
-    if (this.state.password.length < 7) {
-      this.setState({ passwordMsg: "minimum 8 character" });
+    if (this.props.data.password.length < 7) {
+      Store.dispatch(actionCreators.ChangepasswordMsg("minimum 8 character"));
     } else {
       this.setState({ passwordMsg: "" });
     }
-    if (this.state.confirmPassword.length < 7) {
-      this.setState({ confirmPasswordMsg: "minimum 8 character" });
-    } else if (this.state.password !== this.state.confirmPassword) {
-      this.setState({ confirmPasswordMsg: "should match above password" });
+    if (this.props.data.confirmPassword.length < 7) {
+      Store.dispatch(
+        actionCreators.ChangeConfirmPasswordMsg("minimum 8 character")
+      );
+    } else if (this.props.data.password !== this.props.data.confirmPassword) {
+      Store.dispatch(
+        actionCreators.ChangeConfirmPasswordMsg("should match above password")
+      );
     } else {
-      this.setState({ confirmPasswordMsg: "" });
+      Store.dispatch(actionCreators.ChangeConfirmPasswordMsg(""));
       isAgree = true;
     }
 
     if (isAgree) {
-      Actions.login();
+      this.props.navigation.navigate("Login");
     }
   };
 
+  static navigationOptions = {
+    title: "Reset",
+    headerRight: <Image source={require("./public/images/logo.png")} />,
+    headerStyle: {
+      backgroundColor: "grey"
+    },
+
+    headerTintColor: "#fff"
+  };
   render() {
     return (
       <ScrollView>
-        
         <View>
           <ImageBackground
             style={{ height: 500, width: 400, opacity: 0.7 }}
@@ -77,7 +90,7 @@ export default class Reset extends Component {
               autoCapitalize="none"
               onChangeText={this.handlePassword}
             />
-            <Text style={styles.errorMsg}>{this.state.passwordMsg}</Text>
+            <Text style={styles.errorMsg}>{this.props.data.passwordMsg}</Text>
             <TextInput
               style={styles.textForget}
               underlineColorAndroid="transparent"
@@ -85,15 +98,14 @@ export default class Reset extends Component {
               autoCapitalize="none"
               onChangeText={this.handleConfirmPassword}
             />
-            <Text style={styles.errorMsg}>{this.state.confirmPasswordMsg}</Text>
+            <Text style={styles.errorMsg}>
+              {this.props.data.confirmPasswordMsg}
+            </Text>
             <TouchableOpacity
               style={styles.login}
               onPress={() => this.submit()}
             >
               <Text style={styles.textLogin}>Submit</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.GoRegister} onPress={Actions.login}>
-              <Text style={styles.textSubmit}>Login </Text>
             </TouchableOpacity>
           </ImageBackground>
         </View>
@@ -101,3 +113,9 @@ export default class Reset extends Component {
     );
   }
 }
+const mapStateToProps = state => {
+  return {
+    data: state.ReducerReset
+  };
+};
+export default connect(mapStateToProps)(Reset);

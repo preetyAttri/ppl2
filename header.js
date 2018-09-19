@@ -26,7 +26,10 @@ export default class Header extends Component {
   render() {
     return (
       <View style={styles.header}>
-        <Image source={require("./public/images/logo.png")} />
+        <Image
+          style={{ marginLeft: 40 }}
+          source={require("./public/images/logo.png")}
+        />
       </View>
     );
   }

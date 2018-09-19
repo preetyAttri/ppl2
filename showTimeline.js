@@ -24,20 +24,20 @@ export default class App extends React.Component {
   componentDidMount() {}
   render() {
     return (
-      <ScrollView style={{ backgroundColor: "grey" }}>
+      <ScrollView>
         {this.props.singlePostCheck ? null : (
           <View
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
-              backgroundColor: "pink",
+              backgroundColor: "#DCDCDC",
               height: 30
             }}
           >
             {this.props.latest_firstCheck ? (
               <Text
                 style={{
-                  backgroundColor: "#E9967A",
+                  backgroundColor: "#A9A9A9",
                   borderRadius: 1,
                   width: 100,
                   textAlign: "center"
@@ -62,7 +62,7 @@ export default class App extends React.Component {
             !this.props.most_commentedCheck ? (
               <Text
                 style={{
-                  backgroundColor: "#E9967A",
+                  backgroundColor: "#A9A9A9",
                   borderRadius: 1,
                   width: 100,
                   textAlign: "center"
@@ -86,7 +86,7 @@ export default class App extends React.Component {
             {this.props.most_commentedCheck ? (
               <Text
                 style={{
-                  backgroundColor: "#E9967A",
+                  backgroundColor: "#A9A9A9",
                   borderRadius: 1,
                   width: 130,
                   textAlign: "center"
@@ -119,9 +119,8 @@ export default class App extends React.Component {
                     borderWidth: 1 / PixelRatio.get(),
                     justifyContent: "center",
 
-                    marginTop: 1,
                     height: 350,
-                    width: 340,
+                    width: 380,
                     backgroundColor: "#FFE4E1"
                   }
                 ]}
@@ -160,14 +159,20 @@ export default class App extends React.Component {
                   </View>
                 </View>
                 {this.props.singlePostCheck ? (
-                  <Image style={styles.avatar} source={{ uri: x.img }} />
+                  <Image
+                    style={[styles.avatar, { width: 380 }]}
+                    source={{ uri: x.img }}
+                  />
                 ) : (
                   <TouchableOpacity
                     onPress={() => {
                       this.props.singlePost(x._id);
                     }}
                   >
-                    <Image style={styles.avatar} source={{ uri: x.img }} />
+                    <Image
+                      style={{ width: 375, height: 250 }}
+                      source={{ uri: x.img }}
+                    />
                   </TouchableOpacity>
                 )}
                 <View
@@ -184,7 +189,7 @@ export default class App extends React.Component {
                     }}
                   >
                     <TouchableOpacity
-                      style={{ padding: 2 }}
+                      style={{ padding: 2, paddingLeft: 15 }}
                       onPress={() => this.props.toggle_like(x._id)}
                     >
                       <Image
@@ -209,7 +214,7 @@ export default class App extends React.Component {
                     }}
                   >
                     <TouchableOpacity
-                      style={{ paddingTop: 5, paddingLeft: 5 }}
+                      style={{ paddingTop: 5, paddingLeft: 35 }}
                       onPress={() => this.props.toggle_unLike(x._id)}
                     >
                       <Image
@@ -219,34 +224,43 @@ export default class App extends React.Component {
                     </TouchableOpacity>
                     {x.unLikes.length == 0 || x.unLikes.length == 1 ? (
                       <Text style={{ paddingTop: 15, paddingLeft: 4 }}>
-                        {x.unLikes.length} UnLike
+                        {x.unLikes.length} Dislike
                       </Text>
                     ) : (
                       <Text style={{ paddingTop: 15, paddingLeft: 4 }}>
-                        {x.unLikes.length} UnLikes
+                        {x.unLikes.length} Dislikes
                       </Text>
                     )}
                   </View>
                   <View
                     style={{
                       flex: 1,
-                      flexDirection: "row"
+                      flexDirection: "row",
+                      paddingLeft: 80
                     }}
                   >
+                    <Image
+                      style={{
+                        height: 30,
+                        width: 30,
+                        marginTop: 12
+                      }}
+                      source={require("./public/images/commentsss.png")}
+                    />
                     <Text
                       style={{
                         padding: 15,
                         paddingLeft: 8
                       }}
                     >
-                      {x.comments.length} COMMENTS
+                      {x.comments.length}
                     </Text>
                   </View>
                 </View>
               </View>
 
               {this.props.singlePostCheck ? (
-                <View style={{ paddingTop: 5 }}>
+                <View style={{ paddingTop: 1 }}>
                   {x.comments.map((i, indexc) => (
                     <View
                       key={indexc}

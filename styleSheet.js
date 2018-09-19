@@ -18,8 +18,10 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   avatar: {
-    width: 370,
-    height: 250
+    width: 330,
+    height: 250,
+    borderColor: "grey",
+    borderWidth: 2
   },
   scene: {
     backgroundColor: "red"
@@ -39,7 +41,7 @@ const styles = StyleSheet.create({
   header: {
     height: 60,
     flexDirection: "row",
-    backgroundColor: "#E9967A",
+    backgroundColor: "grey",
     justifyContent: "space-between"
   },
   login: {
@@ -65,7 +67,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around"
   },
   footer: {
-    backgroundColor: "#E9967A",
+    backgroundColor: "grey",
     height: 65
   },
   text: {

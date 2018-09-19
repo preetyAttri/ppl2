@@ -10,6 +10,16 @@ import {
   TextInput,
   ScrollView
 } from "react-native";
+import {
+  Icon,
+  Button,
+  Container,
+  Header,
+  Content,
+  Left,
+  Right
+} from "native-base";
+const image = require("./public/images/menu.png");
 import styles from "./styleSheet";
 import ImagePicker from "react-native-image-picker";
 
@@ -17,6 +27,9 @@ export default class App extends React.Component {
   state = {
     avatarSource: null,
     addCategory: ""
+  };
+  toggleDrawer = () => {
+    this.props.navigation.toggleDrawer();
   };
   handleCategory = text => {
     this.setState({ addCategory: text });
@@ -50,53 +63,73 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <ScrollView>
-        <View style={[styles.addPostContainer]}>
-          <Text style={{ fontSize: 30, color: "black" }}>Add Category</Text>
+      <Container>
+        <Header
+          style={{ backgroundColor: "grey", justifyContent: "space-between" }}
+        >
+          <Left>
+            <TouchableOpacity onPress={this.toggleDrawer}>
+              <Image
+                source={image}
+                style={{
+                  width: 32,
+                  height: 32
+                }}
+              />
+            </TouchableOpacity>
+          </Left>
+          <Right>
+            <Image source={require("./public/images/logo.png")} />
+          </Right>
+        </Header>
+        <ScrollView>
+          <View style={[styles.addPostContainer]}>
+            <Text style={{ fontSize: 30, color: "black" }}>Add Category</Text>
 
-          <View style={{ alignItems: "center" }}>
-            <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)}>
-              <View
-                style={[
-                  styles.avatar,
-                  styles.avatarContainer,
-                  { marginBottom: 20, marginTop: 20 }
-                ]}
+            <View style={{ alignItems: "center" }}>
+              <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)}>
+                <View
+                  style={[
+                    styles.avatar,
+                    styles.avatarContainer,
+                    { marginBottom: 20, marginTop: 20 }
+                  ]}
+                >
+                  {this.state.avatarSource === null ? (
+                    <Text>Select a Photo</Text>
+                  ) : (
+                    <Image
+                      style={styles.avatar}
+                      source={this.state.avatarSource}
+                    />
+                  )}
+                </View>
+              </TouchableOpacity>
+              <TextInput
+                style={styles.CategoryName}
+                underlineColorAndroid="transparent"
+                placeholder="categoryName"
+                autoCapitalize="none"
+                onChangeText={this.handleCategory}
+              />
+              <Text style={[styles.errorMsg, { fontSize: 20 }]}>
+                {this.props.categoryMsg}
+              </Text>
+              <TouchableOpacity
+                style={[styles.goAddCategory]}
+                onPress={() =>
+                  this.props.uploadCategory(
+                    this.state.avatarSource,
+                    this.state.addCategory
+                  )
+                }
               >
-                {this.state.avatarSource === null ? (
-                  <Text>Select a Photo</Text>
-                ) : (
-                  <Image
-                    style={styles.avatar}
-                    source={this.state.avatarSource}
-                  />
-                )}
-              </View>
-            </TouchableOpacity>
-            <TextInput
-              style={styles.CategoryName}
-              underlineColorAndroid="transparent"
-              placeholder="categoryName"
-              autoCapitalize="none"
-              onChangeText={this.handleCategory}
-            />
-            <Text style={[styles.errorMsg, { fontSize: 20 }]}>
-              {this.props.categoryMsg}
-            </Text>
-            <TouchableOpacity
-              style={[styles.goAddCategory]}
-              onPress={() =>
-                this.props.uploadCategory(
-                  this.state.avatarSource,
-                  this.state.addCategory
-                )
-              }
-            >
-              <Text style={styles.textSubmit}>Upload Category</Text>
-            </TouchableOpacity>
+                <Text style={styles.textSubmit}>Upload Category</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </Container>
     );
   }
 }

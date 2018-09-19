@@ -7,14 +7,25 @@ import {
   TouchableOpacity,
   AsyncStorage
 } from "react-native";
+
 import SideMenu from "react-native-side-menu";
 import Menu from "./menu";
 import AddPost from "./AddPost";
 import ShowTimeline from "./showTimeline";
 import AddCategory from "./AddCategory";
 import SinglePost from "./singlePost";
+import { DrawerNavigator } from "react-navigation";
+
 const image = require("./public/images/menu.png");
-import { Actions } from "react-native-router-flux";
+import {
+  Icon,
+  Button,
+  Container,
+  Header,
+  Content,
+  Left,
+  Right
+} from "native-base";
 const styles = StyleSheet.create({
   button: {
     position: "absolute",
@@ -24,12 +35,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     alignItems: "center"
-  },
-  container: {
-    flex: 1,
-
-    alignItems: "center",
-    backgroundColor: "#F5FCFF"
   },
   welcome: {
     fontSize: 20,
@@ -46,11 +51,8 @@ const styles = StyleSheet.create({
 export default class Basic extends Component {
   constructor(props) {
     super(props);
-
-    this.toggle = this.toggle.bind(this);
-
     this.state = {
-      isOpen: false,
+      
       selectedItem: "",
       username: "",
       categoryArr: [],
@@ -58,7 +60,7 @@ export default class Basic extends Component {
       arr: [],
       singlePost: false,
       uploadMsg: "",
-      commentArr: [],
+      
       commentAdded: "",
       latest_first: false,
       most_commented: false
@@ -98,26 +100,6 @@ export default class Basic extends Component {
       return y - x;
     });
     this.setState({ arr: this.state.arr });
-  };
-  toggle() {
-    this.setState({
-      isOpen: !this.state.isOpen,
-      uploadMsg: ""
-    });
-  }
-
-  updateMenuState(isOpen) {
-    console.log("in timeline");
-    this.setState({ isOpen });
-  }
-
-  onMenuItemSelected = item => {
-    this.setState({
-      isOpen: false,
-      selectedItem: item,
-      singlePost: false,
-      singlePostId: ""
-    });
   };
   _retrieveData = async () => {
     this.setState({ username: await AsyncStorage.getItem("username") });
@@ -202,27 +184,6 @@ export default class Basic extends Component {
         .catch(e => console.log(e));
     }
   };
-  uploadPost = (file, description, category) => {
-    var data = new FormData();
-    data.append("username", this.state.username);
-    data.append("files", file);
-    data.append("description", description);
-    data.append("category", category);
-    // console.warn(data);
-    if (file !== null && description !== "" && category !== "") {
-      fetch("http://192.168.100.97:4002/post/upload", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      })
-        .then(response => response.json())
-        .then(responseJ => {
-          this.setState({ arr: responseJ });
-          this.setState({ uploadMsg: "Post Uploaded" });
-        })
-        .catch(e => console.log(e));
-    }
-  };
   uploadComment = (id, comment) => {
     var data = {
       _id: id,
@@ -265,106 +226,95 @@ export default class Basic extends Component {
       })
       .catch(e => console.log(e));
   }
-  render() {
-    const menu = (
-      <Menu
-        onItemSelected={this.onMenuItemSelected}
-        username={this.state.username}
-        categoryArr={this.state.categoryArr}
-      />
-    );
+  toggleDrawer = () => {
+    this.props.navigation.toggleDrawer();
+  };
+  addPost = () => {
+    console.warn("ldflkgmkdmg");
+  };
 
+  render() {
     return (
-      <SideMenu
-        menu={menu}
-        isOpen={this.state.isOpen}
-        onChange={isOpen => this.updateMenuState(isOpen)}
-      >
-        <View style={{ flexDirection: "row" }}>
-          <View
-            style={{
-              width: 40,
-              backgroundColor: "#FFA07A"
-            }}
-          />
-          <View>
-            {this.state.singlePost ? (
-              <ShowTimeline
-                currentUser={this.state.username}
-                arr={this.state.arr.filter(x => {
-                  return x._id === this.state.singlePostId;
-                })}
-                toggle_like={this.toggle_like}
-                toggle_unLike={this.toggle_unLike}
-                singlePostCheck={this.state.singlePost}
-                uploadComment={this.uploadComment}
-                commentAdded={this.state.commentAdded}
-                handleComment={this.handleComment}
+      <Container>
+        <Header
+          style={{ backgroundColor: "grey", justifyContent: "space-between" }}
+        >
+          <Left>
+            <TouchableOpacity onPress={this.toggleDrawer}>
+              <Image
+                source={image}
+                style={{
+                  width: 32,
+                  height: 32
+                }}
               />
-            ) : this.state.selectedItem === "" ||
-            this.state.selectedItem === "YourTimeline" ? (
-              <ShowTimeline
-                currentUser={this.state.username}
-                arr={this.state.arr}
-                toggle_like={this.toggle_like}
-                toggle_unLike={this.toggle_unLike}
-                singlePost={this.singlePost}
-                singlePostCheck={this.state.singlePost}
-                latest_first={this.latest_first}
-                oldest_first={this.oldest_first}
-                most_commented={this.most_commented}
-                latest_firstCheck={this.state.latest_first}
-                most_commentedCheck={this.state.most_commented}
-              />
-            ) : this.state.selectedItem === "MyUploades" ? (
-              <ShowTimeline
-                currentUser={this.state.username}
-                arr={this.state.arr.filter(x => {
-                  return x.username === this.state.username;
-                })}
-                toggle_like={this.toggle_like}
-                toggle_unLike={this.toggle_unLike}
-                singlePost={this.singlePost}
-                singlePostCheck={this.state.singlePost}
-                latest_first={this.latest_first}
-                oldest_first={this.oldest_first}
-                most_commented={this.most_commented}
-                latest_firstCheck={this.state.latest_first}
-                most_commentedCheck={this.state.most_commented}
-              />
-            ) : this.state.selectedItem === "AddPost" ? (
-              <AddPost
-                uploadPost={this.uploadPost}
-                uploadMsg={this.state.uploadMsg}
-              />
-            ) : this.state.selectedItem === "AddCategory" ? (
-              <AddCategory
-                categoryMsg={this.state.categoryMsg}
-                uploadCategory={this.uploadCategory}
-              />
-            ) : (
-              <ShowTimeline
-                currentUser={this.state.username}
-                arr={this.state.arr.filter(x => {
-                  return x.category === this.state.selectedItem;
-                })}
-                toggle_like={this.toggle_like}
-                toggle_unLike={this.toggle_unLike}
-                singlePost={this.singlePost}
-                singlePostCheck={this.state.singlePost}
-                latest_first={this.latest_first}
-                oldest_first={this.oldest_first}
-                most_commented={this.most_commented}
-                latest_firstCheck={this.state.latest_first}
-                most_commentedCheck={this.state.most_commented}
-              />
-            )}
-          </View>
+            </TouchableOpacity>
+          </Left>
+          <Right>
+            <Image source={require("./public/images/logo.png")} />
+          </Right>
+        </Header>
+
+        <View>
+          {this.state.singlePost ? (
+            this.AddPost
+          ) : this.state.selectedItem === "" ||
+          this.state.selectedItem === "YourTimeline" ? (
+            <ShowTimeline
+              currentUser={this.state.username}
+              arr={this.state.arr}
+              toggle_like={this.toggle_like}
+              toggle_unLike={this.toggle_unLike}
+              singlePost={this.singlePost}
+              singlePostCheck={this.state.singlePost}
+              latest_first={this.latest_first}
+              oldest_first={this.oldest_first}
+              most_commented={this.most_commented}
+              latest_firstCheck={this.state.latest_first}
+              most_commentedCheck={this.state.most_commented}
+            />
+          ) : this.state.selectedItem === "MyUploades" ? (
+            <ShowTimeline
+              currentUser={this.state.username}
+              arr={this.state.arr.filter(x => {
+                return x.username === this.state.username;
+              })}
+              toggle_like={this.toggle_like}
+              toggle_unLike={this.toggle_unLike}
+              singlePost={this.singlePost}
+              singlePostCheck={this.state.singlePost}
+              latest_first={this.latest_first}
+              oldest_first={this.oldest_first}
+              most_commented={this.most_commented}
+              latest_firstCheck={this.state.latest_first}
+              most_commentedCheck={this.state.most_commented}
+            />
+          ) : this.state.selectedItem === "AddPost" ? (
+            this.addPost
+          ) : this.state.selectedItem === "AddCategory" ? (
+            <AddCategory
+              categoryMsg={this.state.categoryMsg}
+              uploadCategory={this.uploadCategory}
+            />
+          ) : (
+            <ShowTimeline
+              currentUser={this.state.username}
+              arr={this.state.arr.filter(x => {
+                return x.category === this.state.selectedItem;
+              })}
+              toggle_like={this.toggle_like}
+              toggle_unLike={this.toggle_unLike}
+              singlePost={this.singlePost}
+              singlePostCheck={this.state.singlePost}
+              latest_first={this.latest_first}
+              oldest_first={this.oldest_first}
+              most_commented={this.most_commented}
+              latest_firstCheck={this.state.latest_first}
+              most_commentedCheck={this.state.most_commented}
+            />
+          )}
         </View>
-        <TouchableOpacity onPress={this.toggle} style={styles.button}>
-          <Image source={image} style={{ width: 32, height: 32 }} />
-        </TouchableOpacity>
-      </SideMenu>
+      </Container>
     );
   }
 }

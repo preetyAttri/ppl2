@@ -15,54 +15,48 @@ import {
   ImageBackground,
   AsyncStorage
 } from "react-native";
-import { Actions } from "react-native-router-flux";
-export default class Register extends Component {
+import Header from "./header";
+import Store from "./store/Store";
+import { connect } from "react-redux";
+import * as actionCreators from "./actions";
+class Register extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      username: "",
-      password: "",
-      email: "",
-      firstName: "",
-      lastName: "",
-      userNameMsg: "",
-      passwordMsg: "",
-      emailMsg: "",
-      firstNameMsg: "",
-      lastNameMsg: "",
-      isAgree: false
-    };
   }
 
   handleUsername = text => {
-    this.setState({ userNameMsg: "" });
-    this.setState({ username: text });
+    Store.dispatch(actionCreators.ChangeUserNameMsg(""));
+    Store.dispatch(actionCreators.inputChange("username", text));
   };
   handleFirstName = text => {
-    this.setState({ firstNameMsg: "" });
-    this.setState({ firstName: text });
+    Store.dispatch(actionCreators.ChangeFirstNameMsg(""));
+    Store.dispatch(actionCreators.inputChange("firstName", text));
   };
   handleLastName = text => {
-    this.setState({ lastNameMsg: "" });
-    this.setState({ lastName: text });
+    Store.dispatch(actionCreators.ChangeLastNameMsg(""));
+    Store.dispatch(actionCreators.inputChange("lastName", text));
   };
   handleEmail = text => {
-    this.setState({ email: text });
+    Store.dispatch(actionCreators.inputChange("email", text));
+
     var reg = RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/);
 
     var emailValid = reg.test(text);
     if (!emailValid) {
-      this.setState({ emailMsg: "Enter valid mail" });
+      Store.dispatch(actionCreators.ChangeEmailMsg("Enter valid mail"));
     } else {
-      this.setState({ emailMsg: "" });
+      Store.dispatch(actionCreators.ChangeEmailMsg(""));
     }
   };
   handlePassword = text => {
-    this.setState({ password: text });
-    if (this.state.password.length < 7 && this.state.password.length != 0) {
-      this.setState({ passwordMsg: "Enter strong password" });
+    Store.dispatch(actionCreators.inputChange("password", text));
+    if (
+      this.props.data.password.length < 7 &&
+      this.props.data.password.length != 0
+    ) {
+      Store.dispatch(actionCreators.ChangePasswordMsg("Enter strong password"));
     } else {
-      this.setState({ passwordMsg: "" });
+      Store.dispatch(actionCreators.ChangePasswordMsg(""));
     }
   };
   _retrieveData = async () => {
@@ -70,9 +64,9 @@ export default class Register extends Component {
       const value = await AsyncStorage.getItem("username");
       if (value !== null) {
         // We have data!!
-        Actions.timeline();
+        this.props.navigation.navigate("DrawerNavigation");
       } else {
-        Actions.login();
+        this.props.navigation.navigate("Login");
       }
     } catch (error) {
       // Error retrieving data
@@ -85,75 +79,83 @@ export default class Register extends Component {
       isPassword = false,
       isFName = false,
       isLName = false;
-    if (this.state.username.length === 0) {
-      this.setState({ userNameMsg: "Enter User Name" });
+    if (this.props.data.username.length === 0) {
+      Store.dispatch(actionCreators.ChangeUserNameMsg("Enter User Name"));
       isUserName = false;
     } else {
-      for (let i = 0; i < this.state.username.length; i++) {
-        if (this.state.username[i] == " ") {
-          this.setState({ userNameMsg: "Whitespace not allowed" });
+      for (let i = 0; i < this.props.data.username.length; i++) {
+        if (this.props.data.username[i] == " ") {
+          Store.dispatch(
+            actionCreators.ChangeUserNameMsg("Whitespace not allowed")
+          );
           isUserName = false;
           break;
         } else {
-          this.setState({ userNameMsg: "" });
+          Store.dispatch(actionCreators.ChangeUserNameMsg(""));
           isUserName = true;
         }
       }
     }
-    if (this.state.password.length === 0) {
-      this.setState({ passwordMsg: "Enter password" });
+    if (this.props.data.password.length === 0) {
+      Store.dispatch(actionCreators.ChangePasswordMsg("Enter password"));
       isPassword = false;
-    } else if (this.state.passwordMsg === "Enter strong password") {
-      this.setState({ passwordMsg: "Enter strong password" });
+    } else if (this.props.data.passwordMsg === "Enter strong password") {
+      Store.dispatch(actionCreators.ChangePasswordMsg("Enter strong password"));
       isPassword = false;
     } else {
-      for (let i = 0; i < this.state.password.length; i++) {
-        if (this.state.password[i] == " ") {
-          this.setState({ passwordMsg: "Whitespace not allowed" });
+      for (let i = 0; i < this.props.data.password.length; i++) {
+        if (this.props.data.password[i] == " ") {
+          Store.dispatch(
+            actionCreators.ChangePasswordMsg("Whitespace not allowed")
+          );
           isPassword = false;
           break;
         } else {
-          this.setState({ passwordMsg: "" });
+          Store.dispatch(actionCreators.ChangePasswordMsg(""));
           isPassword = true;
         }
       }
     }
-    if (this.state.email.length === 0) {
-      this.setState({ emailMsg: "Enter Email Address" });
+    if (this.props.data.email.length === 0) {
+      Store.dispatch(actionCreators.ChangeEmailMsg("Enter Email Address"));
       isEmail = false;
-    } else if (this.state.emailMsg === "Enter valid mail") {
-      this.setState({ emailMsg: "Enter valid mail" });
+    } else if (this.props.data.emailMsg === "Enter valid mail") {
+      Store.dispatch(actionCreators.ChangeEmailMsg("Enter valid mail"));
       isEmail = false;
     } else {
-      this.setState({ emailMsg: "" });
+      Store.dispatch(actionCreators.ChangeEmailMsg(""));
       isEmail = true;
     }
-    if (this.state.firstName.length === 0) {
-      this.setState({ firstNameMsg: "Enter First Name" });
+    if (this.props.data.firstName.length === 0) {
+      Store.dispatch(actionCreators.ChangeFirstNameMsg("Enter First Name"));
       isFName = false;
     } else {
-      for (let i = 0; i < this.state.firstName.length; i++) {
-        if (this.state.firstName[i] == " ") {
-          this.setState({ firstNameMsg: "Whitespace not allowed" });
+      for (let i = 0; i < this.props.data.firstName.length; i++) {
+        if (this.props.data.firstName[i] == " ") {
+          Store.dispatch(
+            actionCreators.ChangeFirstNameMsg("Whitespace not allowed")
+          );
           isFName = false;
           break;
         } else {
-          this.setState({ firstNameMsg: "" });
+          Store.dispatch(actionCreators.ChangeFirstNameMsg(""));
           isFName = true;
         }
       }
     }
-    if (this.state.lastName.length === 0) {
-      this.setState({ lastNameMsg: "Enter Last Name" });
+    if (this.props.data.lastName.length === 0) {
+      Store.dispatch(actionCreators.ChangeLastNameMsg("Enter Last Name"));
       isLName = false;
     } else {
-      for (let i = 0; i < this.state.lastName.length; i++) {
-        if (this.state.lastName[i] == " ") {
-          this.setState({ lastNameMsg: "Whitespace not allowed" });
+      for (let i = 0; i < this.props.data.lastName.length; i++) {
+        if (this.props.data.lastName[i] == " ") {
+          Store.dispatch(
+            actionCreators.ChangeLastNameMsg("Whitespace not allowed")
+          );
           isLName = false;
           break;
         } else {
-          this.setState({ lastNameMsg: "" });
+          Store.dispatch(actionCreators.ChangeLastNameMsg(""));
           isLName = true;
         }
       }
@@ -163,18 +165,20 @@ export default class Register extends Component {
         method: "POST",
         mode: "cors",
         body: JSON.stringify({
-          username: this.state.username,
-          password: this.state.password,
-          email: this.state.email,
-          firstName: this.state.firstName,
-          lastName: this.state.lastName
+          username: this.props.data.username,
+          password: this.props.data.password,
+          email: this.props.data.email,
+          firstName: this.props.data.firstName,
+          lastName: this.props.data.lastName
         }),
         headers: { "Content-Type": "application/json" }
       })
         .then(response => response.json())
         .then(responseJ => {
           if (responseJ == "already there") {
-            this.setState({ userNameMsg: "Username Already exist" });
+            Store.dispatch(
+              actionCreators.ChangeUserNameMsg("Username Already exist")
+            );
           } else {
             Alert.alert("Mail is sent to your registered Mail plz verify");
           }
@@ -182,7 +186,15 @@ export default class Register extends Component {
         .catch(e => console.log(e));
     }
   };
+  static navigationOptions = {
+    title: "Register",
+    headerRight: <Image source={require("./public/images/logo.png")} />,
+    headerStyle: {
+      backgroundColor: "grey"
+    },
 
+    headerTintColor: "#fff"
+  };
   render() {
     return (
       <ScrollView>
@@ -198,7 +210,7 @@ export default class Register extends Component {
               autoCapitalize="none"
               onChangeText={this.handleUsername}
             />
-            <Text style={styles.errorMsg}>{this.state.userNameMsg}</Text>
+            <Text style={styles.errorMsg}>{this.props.data.userNameMsg}</Text>
             <TextInput
               style={styles.text}
               underlineColorAndroid="transparent"
@@ -206,7 +218,7 @@ export default class Register extends Component {
               autoCapitalize="none"
               onChangeText={this.handleEmail}
             />
-            <Text style={styles.errorMsg}>{this.state.emailMsg}</Text>
+            <Text style={styles.errorMsg}>{this.props.data.emailMsg}</Text>
             <TextInput
               style={styles.text}
               secureTextEntry={true}
@@ -215,7 +227,7 @@ export default class Register extends Component {
               autoCapitalize="none"
               onChangeText={this.handlePassword}
             />
-            <Text style={styles.errorMsg}>{this.state.passwordMsg}</Text>
+            <Text style={styles.errorMsg}>{this.props.data.passwordMsg}</Text>
             <TextInput
               style={styles.text}
               underlineColorAndroid="transparent"
@@ -223,7 +235,7 @@ export default class Register extends Component {
               autoCapitalize="none"
               onChangeText={this.handleFirstName}
             />
-            <Text style={styles.errorMsg}>{this.state.firstNameMsg}</Text>
+            <Text style={styles.errorMsg}>{this.props.data.firstNameMsg}</Text>
             <TextInput
               style={styles.text}
               underlineColorAndroid="transparent"
@@ -231,7 +243,8 @@ export default class Register extends Component {
               autoCapitalize="none"
               onChangeText={this.handleLastName}
             />
-            <Text style={styles.errorMsg}>{this.state.lastNameMsg}</Text>
+            <Text style={styles.errorMsg}>{this.props.data.lastNameMsg}</Text>
+
             <TouchableOpacity
               style={styles.submit}
               onPress={() => this.submit()}
@@ -250,3 +263,9 @@ export default class Register extends Component {
     );
   }
 }
+const mapStateToProps = state => {
+  return {
+    data: state.ReducerRegister
+  };
+};
+export default connect(mapStateToProps)(Register);
