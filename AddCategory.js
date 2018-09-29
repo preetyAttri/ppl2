@@ -22,17 +22,15 @@ import {
 const image = require("./public/images/menu.png");
 import styles from "./styleSheet";
 import ImagePicker from "react-native-image-picker";
-
-export default class App extends React.Component {
-  state = {
-    avatarSource: null,
-    addCategory: ""
-  };
+import Store from "./store/Store";
+import { connect } from "react-redux";
+import * as actionCreators from "./actions";
+class AddCategory extends React.Component {
   toggleDrawer = () => {
     this.props.navigation.toggleDrawer();
   };
   handleCategory = text => {
-    this.setState({ addCategory: text });
+    Store.dispatch(actionCreators.ChangeCategory("text"));
   };
   selectPhotoTapped() {
     const options = {
@@ -53,10 +51,7 @@ export default class App extends React.Component {
 
         // You can also display the image using data:
         // let source = { uri: 'data:image/jpeg;base64,' + response.data };
-
-        this.setState({
-          avatarSource: source
-        });
+        Store.dispatch(actionCreators.ChangeFile(source));
       }
     });
   }
@@ -95,12 +90,12 @@ export default class App extends React.Component {
                     { marginBottom: 20, marginTop: 20 }
                   ]}
                 >
-                  {this.state.avatarSource === null ? (
+                  {this.props.state.avatarSource === null ? (
                     <Text>Select a Photo</Text>
                   ) : (
                     <Image
                       style={styles.avatar}
-                      source={this.state.avatarSource}
+                      source={this.props.state.avatarSource}
                     />
                   )}
                 </View>
@@ -119,8 +114,8 @@ export default class App extends React.Component {
                 style={[styles.goAddCategory]}
                 onPress={() =>
                   this.props.uploadCategory(
-                    this.state.avatarSource,
-                    this.state.addCategory
+                    this.props.state.avatarSource,
+                    this.props.state.addCategory
                   )
                 }
               >
@@ -133,3 +128,9 @@ export default class App extends React.Component {
     );
   }
 }
+const mapStateToProps = state => {
+  return {
+    data: state.ReducerTimeline
+  };
+};
+export default connect(mapStateToProps)(AddCategory);

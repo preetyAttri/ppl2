@@ -52,7 +52,6 @@ export default class Basic extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      
       selectedItem: "",
       username: "",
       categoryArr: [],
@@ -60,7 +59,7 @@ export default class Basic extends Component {
       arr: [],
       singlePost: false,
       uploadMsg: "",
-      
+
       commentAdded: "",
       latest_first: false,
       most_commented: false
@@ -230,7 +229,7 @@ export default class Basic extends Component {
     this.props.navigation.toggleDrawer();
   };
   addPost = () => {
-    console.warn("ldflkgmkdmg");
+    console.warn("hey");
   };
 
   render() {
@@ -273,7 +272,7 @@ export default class Basic extends Component {
               latest_firstCheck={this.state.latest_first}
               most_commentedCheck={this.state.most_commented}
             />
-          ) : this.state.selectedItem === "MyUploades" ? (
+          ) : this.state.selectedItem === "MyUploads" ? (
             <ShowTimeline
               currentUser={this.state.username}
               arr={this.state.arr.filter(x => {

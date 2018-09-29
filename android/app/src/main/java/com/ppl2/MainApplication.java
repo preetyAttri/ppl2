@@ -3,6 +3,8 @@ package com.ppl2;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.robertsheao.RNZenDeskSupport.RNZenDeskSupport;
+import com.robertsheao.RNZenDeskSupport.RNZenDeskSupport;
 import com.imagepicker.ImagePickerPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -24,7 +26,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new ImagePickerPackage()
+            new RNZenDeskSupport(),
+                        new ImagePickerPackage()
       );
     }
 

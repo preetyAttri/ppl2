@@ -19,6 +19,7 @@ import Header from "./header";
 import Store from "./store/Store";
 import { connect } from "react-redux";
 import * as actionCreators from "./actions";
+import ZendeskSupport from "react-native-zendesk-support";
 class Register extends Component {
   constructor(props) {
     super(props);
@@ -186,6 +187,26 @@ class Register extends Component {
         .catch(e => console.log(e));
     }
   };
+  componentDidMount() {
+    const config = {
+      appId: "b5eec924e48780c607350184f3e4126021be49f03a8c0b3e",
+      zendeskUrl: "https://daffodilswsupport.zendesk.com",
+      clientId: "mobile_sdk_client_7c6882ac1c60b512c12f"
+    };
+    ZendeskSupport.initialize(config);
+    const identity = {
+      customerEmail: "sharmapreety537@gmail.com",
+      customerName: "Preety",
+      customerPassword: "poiuytrewq"
+    };
+    ZendeskSupport.setupIdentity(identity);
+    // const customFields = {
+    //   customFieldId: "360011148232"
+    // };
+    // ZendeskSupport.callSupport(customFields);
+    ZendeskSupport.supportHistory();
+    ZendeskSupport.showHelpCenter();
+  }
   static navigationOptions = {
     title: "Register",
     headerRight: <Image source={require("./public/images/logo.png")} />,
