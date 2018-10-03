@@ -15,6 +15,8 @@ import {
   ImageBackground,
   AsyncStorage
 } from "react-native";
+
+import SplashScreen from "react-native-splash-screen";
 import Header from "./header";
 import Store from "./store/Store";
 import { connect } from "react-redux";
@@ -162,7 +164,7 @@ class Register extends Component {
       }
     }
     if (isUserName && isEmail && isPassword && isFName & isLName) {
-      fetch("http://192.168.100.97:4002/signUp", {
+      fetch("https://192.168.100.97:4002/signUp", {
         method: "POST",
         mode: "cors",
         body: JSON.stringify({
@@ -188,6 +190,7 @@ class Register extends Component {
     }
   };
   componentDidMount() {
+    SplashScreen.hide();
     const config = {
       appId: "b5eec924e48780c607350184f3e4126021be49f03a8c0b3e",
       zendeskUrl: "https://daffodilswsupport.zendesk.com",
@@ -206,6 +209,34 @@ class Register extends Component {
     // ZendeskSupport.callSupport(customFields);
     ZendeskSupport.supportHistory();
     ZendeskSupport.showHelpCenter();
+    fetch(
+      "https://daffodilswsupport.zendesk.com/api/v2/requests/4/comments.json  ",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization:
+            "Basic" + "cHJlZXR5LmF0dHJpQGRhZmZvZGlsc3cuY29tOjA5MDUwOEBhcHM="
+        }
+      }
+    )
+      .then(response => response.json())
+      .then(responseJ => console.warn(responseJ));
+    // https.request(
+    //   {
+    //     host: "daffodilswsupport.zendesk.com",
+    //     path: "/api/v2/requests/4/comments.json",
+    //     method: "GET",
+    //     headers: {
+    //       "Content-Type": "application/json"
+    //     },
+    //     auth:
+    //       "username:preety.attri@daffodilsw.com/token:UX9UTzVwQil81S1q8M5Ab4U5Tec2ichmxRACqg2B"
+    //   },
+    //   function(res) {
+    //     console.warn(res);
+    //   }
+    // );
   }
   static navigationOptions = {
     title: "Register",
